@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jumper.iml" filepath="$PROJECT_DIR$/jumper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jumper.iml" filepath="$PROJECT_DIR$/.idea/modules/jumper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/jumper.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/jumper.app.iml" />
     </modules>
   </component>
 </project>
