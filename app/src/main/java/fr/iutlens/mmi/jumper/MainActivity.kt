@@ -11,7 +11,7 @@ import fr.iutlens.mmi.jumper.utils.AccelerationProxy
  *
  */
 class MainActivity : AppCompatActivity() {
-    private var proxy: AccelerationProxy? = null
+  //  private var proxy: AccelerationProxy? = null
     protected override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -19,16 +19,16 @@ class MainActivity : AppCompatActivity() {
         val game: GameView = findViewById(R.id.gameView)
 
         // On configure le jeu pour recevoir les changements d'orientation
-        proxy = AccelerationProxy(this, game)
+//        proxy = AccelerationProxy(this, game)
     }
 
     protected override fun onResume() {
         super.onResume()
-        proxy!!.resume() // On relance l'accéléromètre
+  //      proxy!!.resume() // On relance l'accéléromètre
     }
 
     protected override fun onPause() {
         super.onPause()
-        proxy!!.pause() // On mets en pause l'accéléromètre
+//        proxy!!.pause() // On mets en pause l'accéléromètre
     }
 }
