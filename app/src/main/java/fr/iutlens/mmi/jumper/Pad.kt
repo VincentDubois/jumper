@@ -2,12 +2,10 @@ package fr.iutlens.mmi.jumper
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.provider.SyncStateContract.Helpers.update
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 
-class Pad(val margin: Float) : View.OnTouchListener {
+class Pad(private val margin: Float) : View.OnTouchListener {
 
     data class Button(val radius : Float, var x : Float = 0f, var y : Float = 0f,var pressed : Boolean = false){
         fun onTouch(event: MotionEvent){
@@ -27,16 +25,7 @@ class Pad(val margin: Float) : View.OnTouchListener {
 
         fun paint(canvas: Canvas) {
             if (x==0f) return
-
             canvas.drawCircle(x,y,radius, paint)
-        }
-    }
-
-    companion object{
-        val paint = Paint().apply {
-            color = 0xaa777777.toInt()
-            style = Paint.Style.STROKE
-            strokeWidth = 2f
         }
     }
 
@@ -46,8 +35,6 @@ class Pad(val margin: Float) : View.OnTouchListener {
         this["right"] = Button(margin*2)
         this["jump"] = Button(margin*3)
     }
-
-
 
     fun update(w :Int, h : Int){
         buttons["right"]?.apply {
@@ -65,11 +52,16 @@ class Pad(val margin: Float) : View.OnTouchListener {
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-        if (event != null) {
-            Log.d("touch",""+event.x+" " +event.y+ " "+event.action+" "+event.actionMasked)
-            buttons.values.forEach { it.onTouch(event) }
-        }
+        if (event != null) { buttons.values.forEach { it.onTouch(event) } }
         return true
+    }
+
+    companion object{
+        val paint = Paint().apply {
+            color = 0xaa777777.toInt()
+            style = Paint.Style.STROKE
+            strokeWidth = 2f
+        }
     }
 
     fun paint(canvas: Canvas) {
