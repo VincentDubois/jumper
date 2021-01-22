@@ -10,7 +10,7 @@ import fr.iutlens.mmi.jumper.utils.TimerAction
 
 class GameView : View, TimerAction {
     private lateinit var timer: RefreshHandler
-    private lateinit var level: Level2D
+    private lateinit var level: Level
     private lateinit var hero: Hero
     private lateinit var pad : Pad
 
@@ -38,7 +38,7 @@ class GameView : View, TimerAction {
 
         // Chargement et utilisation des feuilles de sprites
         register(R.drawable.decor_running, 3, 4*3, this.context)
-        level = Level2D(R.drawable.decor_running, null)
+        level = Level(R.drawable.decor_running, null)
 
         register(R.drawable.running_rabbit, 3, 3, this.context)
         hero = Hero(R.drawable.running_rabbit)
@@ -99,7 +99,7 @@ class GameView : View, TimerAction {
         setCamera(canvas)
         // Dessin des différents éléments
         level.paint(canvas, hero.x)
-        hero.paint(canvas, level.getX(Level2D.TILES_LEFT.toFloat()), level.getY(hero.y))
+        hero.paint(canvas, level.getX(Level.TILES_LEFT.toFloat()), level.getY(hero.y))
 
         //On reprend la transformation initiale pour dessiner le pad
         canvas.restore()
