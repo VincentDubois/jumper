@@ -11,16 +11,18 @@ class Pad(val margin: Float) : View.OnTouchListener {
 
     data class Button(val radius : Float, var x : Float = 0f, var y : Float = 0f,var pressed : Boolean = false){
         fun onTouch(event: MotionEvent){
-
-            val i = event.actionIndex
-            val dx = event.getX(i) - x
-            val dy = event.getY(i) - y
-            if (dx * dx + dy * dy < radius * radius) {
-            when (event.actionMasked){
-                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> pressed = true
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> pressed = false
+            var tmp_pressed = false
+            for(i in 0 until event.pointerCount) {
+                val dx = event.getX(i) - x
+                val dy = event.getY(i) - y
+                if (dx * dx + dy * dy < radius * radius) {
+                    when (event.actionMasked) {
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {}
+                        else -> tmp_pressed = true
+                    }
                 }
             }
+            pressed = tmp_pressed
         }
 
         fun paint(canvas: Canvas) {
