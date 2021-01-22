@@ -2,7 +2,7 @@ package fr.iutlens.mmi.jumper
 
 import android.graphics.Canvas
 import fr.iutlens.mmi.jumper.utils.SpriteSheet
-import kotlin.math.abs
+import fr.iutlens.mmi.jumper.Level2D
 
 /**
  * Created by dubois on 30/12/2017.
@@ -17,7 +17,7 @@ class Hero(sprite_id: Int) {
     private var frame = 0
     private var cpt = 0
 
-    fun update(level: Level) {
+    fun update(level : Level2D) {
 
         x += vx
         y += vy // inertie
@@ -25,8 +25,8 @@ class Hero(sprite_id: Int) {
         if (x > level.length) x = 0f // On boucle
         if (x < 0) x = level.length.toFloat() // dans les deux sens
 
-        val slope =  level.getSlope(x+1)
-        val floor = level.getFloor(x+1)
+        val slope =  level.getSlope(x)
+        val floor = level.getFloor(x,y-vy+0.1f)
 
         var altitude = y - floor
         if (altitude < 0) { // On est dans le sol : atterrissage
@@ -64,7 +64,7 @@ class Hero(sprite_id: Int) {
         const val SAME_FRAME = 3
         const val BASELINE = 0.93f
         const val G = 0.2f
-        const val IMPULSE = 2.5f
+        const val IMPULSE = 4f
         const val SPEED = 0.1f
     }
 
