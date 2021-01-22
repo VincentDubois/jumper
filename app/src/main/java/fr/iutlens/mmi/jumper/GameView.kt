@@ -4,16 +4,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import fr.iutlens.mmi.jumper.utils.AccelerationProxy.AccelerationListener
 import fr.iutlens.mmi.jumper.utils.RefreshHandler
 import fr.iutlens.mmi.jumper.utils.SpriteSheet.Companion.register
 import fr.iutlens.mmi.jumper.utils.TimerAction
-import kotlin.math.abs
 
-class GameView : View, TimerAction, AccelerationListener {
+class GameView : View, TimerAction {
     private lateinit var timer: RefreshHandler
     private lateinit var level: Level
-    private var current_pos = 0f
     private lateinit var hero: Hero
     private val prep = 0.0
     private lateinit var pad : Pad
@@ -40,11 +37,12 @@ class GameView : View, TimerAction, AccelerationListener {
      */
     private fun init(attrs: AttributeSet?, defStyle: Int) {
 
-        // Chargement des feuilles de sprites
+        // Chargement et utilisation des feuilles de sprites
         register(R.drawable.decor_running, 3, 4, this.context)
         level = Level(R.drawable.decor_running, null)
+
         register(R.drawable.running_rabbit, 3, 3, this.context)
-        hero = Hero(R.drawable.running_rabbit, SPEED)
+        hero = Hero(R.drawable.running_rabbit)
 
 
         pad = Pad(resources.getDimension(R.dimen.margin))
@@ -66,14 +64,19 @@ class GameView : View, TimerAction, AccelerationListener {
         if (this.isShown) { // Si la vue est visible
             timer.scheduleRefresh(30) // programme le prochain rafraichissement
 
-            if (pad["right"]) current_pos += SPEED
-            if (pad["left"]) current_pos -= SPEED
+            // gestion des actions
+
+            hero.vx = when {
+                pad["right"] -> Hero.SPEED
+                pad["left"] -> -Hero.SPEED
+                else -> 0f
+            }
 
             if (pad["jump"]) hero.jump(1f)
 
+            // Déplacement du héro
+            hero.update(level)
 
-            if (current_pos > level.length) current_pos = 0f
-            hero.update(level.getFloor(current_pos + 1), level.getSlope(current_pos + 1))
             invalidate() // demande à rafraichir la vue
         }
     }
@@ -86,19 +89,18 @@ class GameView : View, TimerAction, AccelerationListener {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         // On met une couleur de fond
-        canvas.drawColor(-0x1000000)
+        canvas.drawColor(0xFF000000.toInt())
 
-
+        // On sauvegarde la transformation "naturelle" (0,0) en haut à gauche, 1 = 1 pixel
         canvas.save()
         // On choisit la transformation à appliquer à la vue i.e. la position
         // de la "camera"
         setCamera(canvas)
         // Dessin des différents éléments
-        level.paint(canvas, current_pos)
-        val x = 1f
-        val y = hero.y
-        hero.paint(canvas, level.getX(x), level.getY(y))
+        level.paint(canvas, hero.x)
+        hero.paint(canvas, level.getX(1f), level.getY(hero.y))
 
+        //On reprend la transformation initiale pour dessiner le pad
         canvas.restore()
 
         pad.paint(canvas)
@@ -120,30 +122,7 @@ class GameView : View, TimerAction, AccelerationListener {
         // On mets à l'échelle calculée au dessus
         canvas.scale(scale, scale)
 
-        // On centre sur la position actuelle de la voiture (qui se retrouve en 0,0 )
+        // On centre sur la position actuelle  (qui se retrouve en 0,0 )
         canvas.translate(0f, -level.getY(hero.y))
-    }
-
-    override fun onAcceleration(accelDelta: Float, dt: Double) {
-//        Log.d("onAcceleration", accelDelta+" "+dt);
-        if (accelDelta > 0.5f) {
-            hero.jump(abs(accelDelta))
-        }
-        /*        if (accelDelta<0)
-            prep += -accelDelta;
-            if (prep > hero.MAX_STRENGTH) {
-                hero.jump((float) prep);
-                prep = 0;
-            }
-        else {
-            if (prep > 0.1) {
-                hero.jump((float) prep);
-            }
-            prep = 0;
-        }*/
-    }
-
-    companion object {
-        const val SPEED = 0.1f
     }
 }

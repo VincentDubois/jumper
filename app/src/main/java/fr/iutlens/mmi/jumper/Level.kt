@@ -21,7 +21,9 @@ class Level(sprite_id: Int, s: String?) {
     private lateinit var sprite_id: IntArray
     private lateinit var baseline: IntArray
     private lateinit var slope: IntArray
-    private val sprite: SpriteSheet
+    private val sprite: SpriteSheet = SpriteSheet[sprite_id]!!
+
+
     private fun parse(s: String?) {
         var size = 0
         // Calcul de la longueur réelle du parcours (+- changent le niveau, pas la longueur)
@@ -133,9 +135,6 @@ class Level(sprite_id: Int, s: String?) {
     }
 
     init {
-        var s = s
-        if (s == null) s = def
-        parse(s)
-        sprite = SpriteSheet.get(sprite_id)!!
+        parse(s ?: def)
     }
 }

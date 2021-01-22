@@ -2,25 +2,32 @@ package fr.iutlens.mmi.jumper
 
 import android.graphics.Canvas
 import fr.iutlens.mmi.jumper.utils.SpriteSheet
+import kotlin.math.abs
 
 /**
  * Created by dubois on 30/12/2017.
  */
-class Hero(sprite_id: Int, vx: Float) {
-    private val BASELINE = 0.93f
-    private val G = 0.2f
-    private val IMPULSE = 2.5f
-    private val sprite: SpriteSheet
-    var y: Float
-        private set
-    private var vy: Float
-    private val vx: Float
-    private var jump: Float
-    private var frame: Int
-    private var cpt: Int
+class Hero(sprite_id: Int) {
+    private val sprite: SpriteSheet = SpriteSheet[sprite_id]!!
+    var y = 0f
+    var x = 0f
+    var vx = 0f
+    private var vy = 0f
+    private var jump = 0f
+    private var frame = 0
+    private var cpt = 0
 
-    fun update(floor: Float, slope: Float) {
+    fun update(level: Level) {
+
+        x += vx
         y += vy // inertie
+
+        if (x > level.length) x = 0f // On boucle
+        if (x < 0) x = level.length.toFloat() // dans les deux sens
+
+        val slope =  level.getSlope(x+1)
+        val floor = level.getFloor(x+1)
+
         var altitude = y - floor
         if (altitude < 0) { // On est dans le sol : atterrissage
             vy = 0f //floor-y;
@@ -29,16 +36,16 @@ class Hero(sprite_id: Int, vx: Float) {
         }
         if (altitude == 0f) { // en contact avec le sol
             if (jump != 0f) {
-                vy = jump * IMPULSE * vx // On saute ?
+                vy = jump * IMPULSE * SPEED // On saute ?
                 frame = 3
             } else {
 //                vy = -G*vx;
-                vy = (slope - G) * vx // On suit le sol...
+                vy = slope*vx - G * SPEED // On suit le sol...
                 cpt = (cpt + 1) % SAME_FRAME
                 if (cpt == 0) frame = (frame + 1) % 8
             }
         } else { // actuellement en vol
-            vy -= G * vx // effet de la gravité
+            vy -= G *  SPEED// effet de la gravité
             frame = if (vy > 0) 3 else 5
             //            if (y < floor+slope*vx) y = floor+slope*vx; // atterrissage ?
         }
@@ -50,23 +57,15 @@ class Hero(sprite_id: Int, vx: Float) {
     }
 
     fun jump(strength: Float) {
-        var strength = strength
-        if (strength > MAX_STRENGTH) strength = MAX_STRENGTH
-        if (strength > jump) jump = strength
+        jump = strength
     }
 
     companion object {
         const val SAME_FRAME = 3
-        const val MAX_STRENGTH = 2f
+        const val BASELINE = 0.93f
+        const val G = 0.2f
+        const val IMPULSE = 2.5f
+        const val SPEED = 0.1f
     }
 
-    init {
-        sprite = SpriteSheet.get(sprite_id)!!
-        y = 0f
-        vy = 0f
-        jump = 0f
-        frame = 0
-        cpt = 0
-        this.vx = vx
-    }
 }
